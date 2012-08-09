@@ -2,7 +2,8 @@ memcached = require './memcached'
 app = require './app'
 
 module.exports = (uid, version, callback) -> 
-	key = "#{app.settings.memcachedPrefix}#{uid}"
+	memuid = escape uid
+	key = "#{app.settings.memcachedPrefix}#{memuid}"
 	data =
 		version: version
 
