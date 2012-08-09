@@ -3,7 +3,7 @@ app = require './app'
 
 module.exports = (uid, version, callback) -> 
 	key = "#{app.settings.memcachedPrefix}#{uid}"
-	data 
+	data =
 		version: version
 
 	memcached.set key, data, 0, (err, result) ->
