@@ -2,9 +2,13 @@ memcached = require './memcached'
 app = require './app'
 
 module.exports = (uid, version, callback) -> 
+	if uid.substr(uid.length - 2,2) == '=='
+		uidtest = uid.substr(0,uid.length-2);
+
+		
 	key1 = "#{app.settings.memcachedPrefix}#{uid}"
-	memuid = escape uid
-	key2 = "#{app.settings.memcachedPrefix}#{memuid}"
+	key2 = "#{app.settings.memcachedPrefix}#{uidtest}"
+	
 	data =
 		version: version
 
