@@ -3,13 +3,15 @@ app = require './app'
 
 module.exports = (uid, version, callback) -> 
 	key = "#{app.settings.memcachedPrefix}#{uid}"
+	data 
+		version: version
 
-	memcached.set key, 0, version, (err, result) ->
+	memcached.set key, data, 0, (err, result) ->
 		memcached.gets key, (err, result) ->
 			if err
 				callback 503
 			else
-				memcached.cas key, 0, result.cas, version, (err, result) ->
+				memcached.cas key, data, result.cas, 0, (err, result) ->
 					if err
 						callback 503
 					else

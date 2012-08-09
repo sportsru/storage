@@ -4,13 +4,13 @@ Storage = require './models/storage'
 
 app.get '/version/', (req, res) ->
 	Storage.findOne uid: req.uid, (err, doc) ->
-		if err? or not doc?			
-			uncache req.uid, -1, () -> undefined
-			res.json
-				version: -1
-		else
-			res.json
-				version: doc.version
+		vers = -1
+		if not(err? or not doc?)			
+			vers = doc.version
+			
+		uncache req.uid, vers, () -> undefined
+		res.json
+			version: vers
 
 app.post '/set/', (req, res) ->
 	if Object.keys(req.body).length isnt 0
