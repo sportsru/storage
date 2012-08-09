@@ -4,8 +4,10 @@ Storage = require './models/storage'
 
 app.get '/version/', (req, res) ->
 	Storage.findOne uid: req.uid, (err, doc) ->
-		if err? or not doc?
-			res.send 404
+		if err? or not doc?			
+			uncache req.uid, -1, () -> undefined
+			res.json
+				version: -1
 		else
 			res.json
 				version: doc.version
