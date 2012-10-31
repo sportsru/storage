@@ -1,0 +1,9 @@
+{
+	"storage":
+	{
+		"address": "localhost",
+		"port": 3000
+	},
+	"mongo": "mongo://localhost/default",
+	"memcached": "127.0.0.1:11211"
+}
