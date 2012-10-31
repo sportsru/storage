@@ -47,7 +47,7 @@ app.use(express.errorHandler()) if app.get('env') is 'production'
 
 # Устанавливаем маршрутизацию
 
-#require('./api')
+require('./api')
 
 #
 

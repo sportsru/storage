@@ -47,7 +47,7 @@ app.post('/set/', (req, res) ->
 
 # Сохраняет данные счетчика
 
-app.post('/setcounter/', (req, res) ->
+app.get('/setcounter/', (req, res) ->
 	Storage.findOne(uid: req.uid, (err, doc) ->
 		if err?
 			res.send(503)
