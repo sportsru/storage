@@ -57,16 +57,22 @@ app.get('/setcounter/', (req, res) ->
 			tags = {}
 			
 			if not doc?
-				tags[key] = 1 for i, key of tg
+				tags[key] = 1 for key in tg
 
 				doc = new Storage(uid: req.uid, tags: tags)
 
-				doc.save(() -> uncache req.uid, 0, (status) -> res.send status)
+				doc.save(
+					() -> uncache(req.uid, 0, (status) ->
+						res.send(status)
+					)
+				)
 			else
-				tags['tags.' + key] = 1 for i, key of tg
+				tags['tags.' + key] = 1 for key in tg
 
-				Storage.update(_id: doc._id, $inc: tags,
-					() -> uncache req.uid, doc.version, (status) -> res.send status
+				Storage.update((_id: doc._id), ($inc: tags),
+					() -> uncache(req.uid, doc.version, (status) ->
+						res.send(status)
+					)
 				)
 	)
 )

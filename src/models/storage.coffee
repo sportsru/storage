@@ -11,6 +11,10 @@ Storage = new Schema
 		type: Mixed
 		index: false
 		default: {}
+	tags:
+		type: Mixed
+		index: false
+		default: {}
 	version:
 		type: Number
 		index: false
