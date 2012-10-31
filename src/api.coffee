@@ -37,7 +37,7 @@ app.post('/set/', (req, res) ->
 				else
 					doc.data[key] = val for key, val of req.body
 
-					Storage.update(_id: doc._id, $inc: (version: 1), $set: (data: doc.data),
+					Storage.update((_id: doc._id), $inc: (version: 1), $set: (data: doc.data),
 						() -> uncache req.uid, doc.version + 1, (status) -> res.send status
 					)
 		)
