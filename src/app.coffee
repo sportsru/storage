@@ -1,53 +1,64 @@
-# 
-# Module dependencies.
-# 
-express = require 'express'
-program = require 'commander'
-pkg = require '../package'
-app = module.exports = express.createServer()
+# Необходимые модули
+
+http = require('http')
+express = require('express')
+program = require('commander')
+
+#
+
+uid = require('./uid')
+
+# Конфигурация приложения
+
+config = require('../config')
+
+app = module.exports = express()
 
 # CLI args
+
 program
-	.version(pkg.version)
-	.option('-p, --port <port>', 'REST service port', 3000)
-	.option('-b, --mongo <string>', 'MongoDB connection string', 'mongo://localhost/default')
-	.option('-m, --memcached <string>', 'Memcached servers list', '127.0.0.1:11211')
+	.option('-a, --address <string>', 'REST service address', config.storage.address)
+	.option('-p, --port <port>', 'REST service port', config.storage.port)
+	.option('-b, --mongo <string>', 'MongoDB connection string', config.mongo)
+	.option('-m, --memcached <string>', 'Memcached servers list', config.memcached)
 	.option('-v, --verbose', 'Log requests', false)
 	.option('--memcached-prefix <string>', 'Memcached keys prefix', 's_')
-	.parse(process.argv);
+	.parse(process.argv)
 
+# Указываем необходимый Middleware
 
-# Configuration
-app.configure () ->
-	app.use express.bodyParser()
-	app.use express.methodOverride()
-	app.use express.logger('short') if program.verbose
-	app.use require './uid'
-	app.use app.router
-	# app.use express.cookieParser()
+app.use(express.bodyParser())
+app.use(express.methodOverride())
+app.use(express.logger('short')) if program.verbose
+app.use(uid)
+app.use(app.router)
 
-	app.set 'verbose', program.verbose
-	app.set 'memcached', program.memcached
-	app.set 'mongobase', program.mongo
-	app.set 'memcachedPrefix', program.memcachedPrefix
+# Устанавливаем общую конфигурацию приложения
 
-app.configure 'development', () ->
-	app.use express.errorHandler
-		dumpExceptions: true
-		showStack: true
+app.set('verbose', program.verbose)
+app.set('memcached', program.memcached)
+app.set('mongobase', program.mongo)
+app.set('memcachedPrefix', program.memcachedPrefix)
 
-app.configure 'production', () ->
-	app.use express.errorHandler()
+# И для отдельных окружений
 
-# Routes
-require './api'
+app.use(express.errorHandler(dumpExceptions: true, showStack: true)) if app.get('env') is 'development'
+app.use(express.errorHandler()) if app.get('env') is 'production'
 
-app.listen program.port, () ->
+# Устанавливаем маршрутизацию
+
+#require('./api')
+
+#
+
+http.createServer(app).listen(program.port, program.address, () ->
 	console.log """
 		REST server listening
-		Port			: \u001b[91m#{app.address().port}\u001b[0m
+		Address			: \u001b[91m#{program.address}\u001b[0m
+		Port			: \u001b[91m#{program.port}\u001b[0m
 		Memcached		: \u001b[91m#{app.settings.memcached}\u001b[0m
 		Memcached Prefix	: \u001b[91m#{app.settings.memcachedPrefix}\u001b[0m
 		MongoDB			: \u001b[91m#{app.settings.mongobase}\u001b[0m
 		Mode			: \u001b[91m#{app.settings.env}\u001b[0m
 	"""
+)

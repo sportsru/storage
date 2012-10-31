@@ -1,69 +1,83 @@
-app = require './app'
+# Необходимые модули
+
 uncache = require './uncache'
-Storage = require './models/storage'
 
-app.get '/version/', (req, res) ->
-	Storage.findOne uid: req.uid, (err, doc) ->
-		vers = -1
-		if not(err? or not doc?)			
-			vers = doc.version
-			
-		uncache req.uid, vers, () -> undefined
-		res.json
-			version: vers
+#
 
-app.post '/set/', (req, res) ->
+app = require('./app')
+Storage = require('./models/storage')
+
+# Возвращает версию данных
+
+app.get('/version/', (req, res) ->
+	Storage.findOne(uid: req.uid, (err, doc) ->
+		if err?
+			res.send(503)
+		else
+			vers = if doc? then doc.version else -1
+
+			uncache(req.uid, vers, () -> undefined)
+		
+			res.json(version: vers)
+	)
+)
+
+# Сохраняет данные
+
+app.post('/set/', (req, res) ->
 	if Object.keys(req.body).length isnt 0
-		Storage.findOne uid: req.uid, (err, doc) ->
+		Storage.findOne(uid: req.uid, (err, doc) ->
 			if err?
-				res.send 503
+				res.send(503)
 			else
-				if not doc?
-					doc = new Storage 
-						uid: req.uid
-						data: req.body
+				unless doc?
+					doc = new Storage(uid: req.uid, data: req.body)
 
-					doc.save () -> uncache req.uid, 0, (status) -> res.send status
+					doc.save(() -> uncache(req.uid, 0, (status) -> res.send(status)))
 				else
-					for key, val of req.body
-						doc.data[key] = val
+					doc.data[key] = val for key, val of req.body
 
-					Storage.update _id: doc._id,
-						$inc: 
-							version: 1
-						$set:
-							data: doc.data
-					,
+					Storage.update(_id: doc._id, $inc: (version: 1), $set: (data: doc.data),
 						() -> uncache req.uid, doc.version + 1, (status) -> res.send status
+					)
+		)
 	else
-		res.send 200
+		res.send(200)
+)
 
-app.get '/setcounter/', (req, res) ->
-                Storage.findOne uid: req.uid, (err, doc) ->
-                        if err?
-                                res.send 503
-                        else
-                                tg = req.query.tg.split('.')
-                                tags = {}
+# Сохраняет данные счетчика
 
-                                if not doc? 
-	                                for i, key of tg
-        	                                tags[key] = 1
+app.post('/setcounter/', (req, res) ->
+	Storage.findOne(uid: req.uid, (err, doc) ->
+		if err?
+			res.send(503)
+		else
+			tg = req.query.tg.split('.')
+			
+			tags = {}
+			
+			if not doc?
+				tags[key] = 1 for i, key of tg
 
-                                        doc = new Storage
-                                                uid: req.uid
-                                                tags: tags
+				doc = new Storage(uid: req.uid, tags: tags)
 
-                                        doc.save () -> uncache req.uid, 0, (status) -> res.send status
-                                else
-        	                        for i, key of tg
-	                                        tags['tags.' + key] = 1
+				doc.save(() -> uncache req.uid, 0, (status) -> res.send status)
+			else
+				tags['tags.' + key] = 1 for i, key of tg
 
-                                        Storage.update _id: doc._id,
-                                                $inc: tags,
-                                                () -> uncache req.uid, doc.version, (status) -> res.send status
+				Storage.update(_id: doc._id, $inc: tags,
+					() -> uncache req.uid, doc.version, (status) -> res.send status
+				)
+	)
+)
 
+# Возвращает данные
 
-app.get '/data/', (req, res) ->
-	Storage.findOne uid: req.uid, (err, doc) ->
-		res.json if doc? then doc.data else {}
+app.get('/data/', (req, res) ->
+	Storage.findOne(uid: req.uid, (err, doc) ->
+		if err?
+			res.send(503)
+		else
+			res.json(if doc? then doc.data else {})
+	)
+)

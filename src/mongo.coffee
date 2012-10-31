@@ -1,1 +1,1 @@
-module.exports = require('mongoose').connect require('./app').settings.mongobase
+exports = module.exports = require('mongoose').connect require('./app').settings.mongobase
