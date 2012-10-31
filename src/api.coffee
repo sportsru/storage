@@ -36,6 +36,32 @@ app.post '/set/', (req, res) ->
 	else
 		res.send 200
 
+app.get '/setcounter/', (req, res) ->
+                Storage.findOne uid: req.uid, (err, doc) ->
+                        if err?
+                                res.send 503
+                        else
+                                tg = req.query.tg.split('.')
+                                tags = {}
+
+                                if not doc? 
+	                                for i, key of tg
+        	                                tags[key] = 1
+
+                                        doc = new Storage
+                                                uid: req.uid
+                                                tags: tags
+
+                                        doc.save () -> uncache req.uid, 0, (status) -> res.send status
+                                else
+        	                        for i, key of tg
+	                                        tags['tags.' + key] = 1
+
+                                        Storage.update _id: doc._id,
+                                                $inc: tags,
+                                                () -> uncache req.uid, doc.version, (status) -> res.send status
+
+
 app.get '/data/', (req, res) ->
 	Storage.findOne uid: req.uid, (err, doc) ->
 		res.json if doc? then doc.data else {}
