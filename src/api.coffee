@@ -64,31 +64,30 @@ app.post('/set/', (req, res) ->
 
 app.get('/setcounter/', (req, res) ->
 	Storage.findOne(uid: req.uid, (err, doc) ->
-		if err?
+		if err? or not req.query.tg?
 			res.send(503)
 		else
-			if req.query.tg?
-				tg = req.query.tg.split('.')
-				
-				tags = {}
-				
-				unless doc?
-					tags[key] = 1 for key in tg
-	
-					doc = new Storage(uid: req.uid, tags: tags)
-	
-					doc.save(
-						() -> uncache(req.uid, 0, (status) ->
-							res.send(status)
-						)
+			tg = req.query.tg.split('.')
+			
+			tags = {}
+			
+			unless doc?
+				tags[key] = 1 for key in tg
+
+				doc = new Storage(uid: req.uid, tags: tags)
+
+				doc.save(
+					() -> uncache(req.uid, 0, (status) ->
+						res.send(status)
 					)
-				else
-					tags['tags.' + key] = 1 for key in tg
-	
-					Storage.update((_id: doc._id), ($inc: tags),
-						() -> uncache(req.uid, doc.version, (status) ->
-							res.send(status)
-						)
+				)
+			else
+				tags['tags.' + key] = 1 for key in tg
+
+				Storage.update((_id: doc._id), ($inc: tags),
+					() -> uncache(req.uid, doc.version, (status) ->
+						res.send(status)
 					)
+				)
 	)
 )
