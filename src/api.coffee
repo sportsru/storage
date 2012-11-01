@@ -22,6 +22,17 @@ app.get('/version/', (req, res) ->
 	)
 )
 
+# Возвращает данные
+
+app.get('/data/', (req, res) ->
+	Storage.findOne(uid: req.uid, (err, doc) ->
+		if err?
+			res.send(503)
+		else
+			res.json(if doc? then doc.data else {})
+	)
+)
+
 # Сохраняет данные
 
 app.post('/set/', (req, res) ->
@@ -74,16 +85,5 @@ app.get('/setcounter/', (req, res) ->
 						res.send(status)
 					)
 				)
-	)
-)
-
-# Возвращает данные
-
-app.get('/data/', (req, res) ->
-	Storage.findOne(uid: req.uid, (err, doc) ->
-		if err?
-			res.send(503)
-		else
-			res.json(if doc? then doc.data else {})
 	)
 )
