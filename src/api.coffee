@@ -44,7 +44,11 @@ app.post('/set/', (req, res) ->
 				unless doc?
 					doc = new Storage(uid: req.uid, data: req.body)
 
-					doc.save(() -> uncache(req.uid, 0, (status) -> res.send(status)))
+					doc.save(
+						() -> uncache(req.uid, 0, (status) ->
+							res.send(status)
+						)
+					)
 				else
 					doc.data[key] = val for key, val of req.body
 
@@ -63,27 +67,28 @@ app.get('/setcounter/', (req, res) ->
 		if err?
 			res.send(503)
 		else
-			tg = req.query.tg.split('.')
-			
-			tags = {}
-			
-			if not doc?
-				tags[key] = 1 for key in tg
-
-				doc = new Storage(uid: req.uid, tags: tags)
-
-				doc.save(
-					() -> uncache(req.uid, 0, (status) ->
-						res.send(status)
+			if req.query.tg?
+				tg = req.query.tg.split('.')
+				
+				tags = {}
+				
+				unless doc?
+					tags[key] = 1 for key in tg
+	
+					doc = new Storage(uid: req.uid, tags: tags)
+	
+					doc.save(
+						() -> uncache(req.uid, 0, (status) ->
+							res.send(status)
+						)
 					)
-				)
-			else
-				tags['tags.' + key] = 1 for key in tg
-
-				Storage.update((_id: doc._id), ($inc: tags),
-					() -> uncache(req.uid, doc.version, (status) ->
-						res.send(status)
+				else
+					tags['tags.' + key] = 1 for key in tg
+	
+					Storage.update((_id: doc._id), ($inc: tags),
+						() -> uncache(req.uid, doc.version, (status) ->
+							res.send(status)
+						)
 					)
-				)
 	)
 )
