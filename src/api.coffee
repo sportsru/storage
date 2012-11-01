@@ -69,7 +69,7 @@ app.get('/setcounter/', (req, res) ->
 		else
 			tg = req.query.tg.split('.')
 			
-			if tg.length
+			if tg.length is 1 and tg[0] is ''
 				tags = {}
 				
 				unless doc?
