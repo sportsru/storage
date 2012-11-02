@@ -71,11 +71,12 @@ app.get('/setcounter/', (req, res) ->
 			
 			unless tg.length is 1 and tg[0] is ''
 				tags = {}
-				
+				last_visit = Math.floor(new Date() / 1000)
+
 				unless doc?
 					tags[key] = 1 for key in tg
 	
-					doc = new Storage(uid: req.uid, tags: tags)
+					doc = new Storage(uid: req.uid, tags: tags, last_visit: last_visit)
 	
 					doc.save(
 						() -> uncache(req.uid, 0, (status) ->
@@ -84,8 +85,7 @@ app.get('/setcounter/', (req, res) ->
 					)
 				else
 					tags['tags.' + key] = 1 for key in tg
-	
-					Storage.update((_id: doc._id), ($inc: tags),
+					Storage.update((_id: doc._id), $inc: tags, $set: (last_visit: last_visit),
 						() -> uncache(req.uid, doc.version, (status) ->
 							res.send(status)
 						)

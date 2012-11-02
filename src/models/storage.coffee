@@ -19,5 +19,9 @@ Storage = new Schema
 		type: Number
 		index: false
 		default: 0
+	last_visit:
+		type: Number
+		index: false
+		default: 0
 
 Model = module.exports = mongoose.model 'Storage', Storage
