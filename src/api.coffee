@@ -29,9 +29,15 @@ app.get('/data/', (req, res) ->
 		if err?
 			res.send(503)
 		else
-			res.json(if doc? then doc.data else {})
+			if req.query.counter?
+				res.json(if doc? then doc.tags else {})
+			else
+				res.json(if doc? then doc.data else {})
 	)
+		
 )
+
+
 
 # Сохраняет данные
 
