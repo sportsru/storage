@@ -4,9 +4,6 @@ ObjectId = Schema.Types.ObjectId
 Mixed = Schema.Types.Mixed
 
 Storage = new Schema
-	_id:
-		type: String
-		index: true
 	uid :
 		type: String
 		index: true

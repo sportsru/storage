@@ -46,7 +46,7 @@ app.post('/set/', (req, res) ->
 				res.send(503)
 			else
 				unless doc?
-					doc = new Storage(_id: req.uid, uid: req.uid, data: req.body)
+					doc = new Storage(uid: req.uid, data: req.body)
 
 					doc.save(() -> uncache(req.uid, 0, (status) ->
 							res.send(status)
@@ -81,7 +81,7 @@ app.get('/setcounter/', (req, res) ->
 				unless doc?
 					tags[key] = 1 for key in tg
 	
-					doc = new Storage(_id: req.uid, uid: req.uid, tags: tags, last_visit: last_visit)
+					doc = new Storage(uid: req.uid, tags: tags, last_visit: last_visit)
 	
 					doc.save(
 						() -> uncache(req.uid, 0, (status) ->
