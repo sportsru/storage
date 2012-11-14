@@ -37,8 +37,6 @@ app.get('/data/', (req, res) ->
 		
 )
 
-
-
 # Сохраняет данные
 
 app.post('/set/', (req, res) ->
@@ -48,18 +46,19 @@ app.post('/set/', (req, res) ->
 				res.send(503)
 			else
 				unless doc?
-					doc = new Storage(uid: req.uid, data: req.body)
+					doc = new Storage(_id: req.uid, uid: req.uid, data: req.body)
 
-					doc.save(
-						() -> uncache(req.uid, 0, (status) ->
+					doc.save(() -> uncache(req.uid, 0, (status) ->
 							res.send(status)
 						)
 					)
 				else
 					doc.data[key] = val for key, val of req.body
 
-					Storage.update((_id: doc._id), $inc: (version: 1), $set: (data: doc.data),
-						() -> uncache req.uid, doc.version + 1, (status) -> res.send status
+					Storage.update((_id: doc._id), $inc: (version: 1), $set: (data: doc.data), () ->
+						uncache(req.uid, doc.version + 1, (status) ->
+							res.send(status)
+						)
 					)
 		)
 	else
@@ -91,8 +90,8 @@ app.get('/setcounter/', (req, res) ->
 					)
 				else
 					tags['tags.' + key] = 1 for key in tg
-					Storage.update((_id: doc._id), $inc: tags, $set: (last_visit: last_visit),
-						() -> uncache(req.uid, doc.version, (status) ->
+					Storage.update((_id: doc._id), $inc: tags, $set: (last_visit: last_visit), () ->
+						uncache(req.uid, doc.version, (status) ->
 							res.send(status)
 						)
 					)
