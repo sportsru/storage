@@ -5,7 +5,7 @@ Mixed = Schema.Types.Mixed
 
 Storage = new Schema
 	_id :
-		type: String
+		type: Mixed
 		index: true
 	uid :
 		type: String
