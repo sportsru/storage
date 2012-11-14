@@ -46,7 +46,7 @@ app.post('/set/', (req, res) ->
 				res.send(503)
 			else
 				unless doc?
-					doc = new Storage(uid: req.uid, data: req.body)
+					doc = new Storage(_id: req.uid, uid: req.uid, data: req.body)
 
 					doc.save(() -> uncache(req.uid, 0, (status) ->
 							res.send(status)
