@@ -43,7 +43,7 @@ app.post('/set/', (req, res) ->
 	fields = {}
 	fields['data.' + key] = val for key, val of req.body
 		
-	Storage.findAndModify((uid: req.uid), ($inc: (version: 1), $set: fields), (upsert: true), (error, doc) ->
+	Storage.findOneAndUpdate((uid: req.uid), ($inc: (version: 1), $set: fields), (upsert: true), (error, doc) ->
 		if error?
 			res.send(503)
 		else
