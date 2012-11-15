@@ -40,30 +40,17 @@ app.get('/data/', (req, res) ->
 # Сохраняет данные
 
 app.post('/set/', (req, res) ->
-	if Object.keys(req.body).length isnt 0
-		Storage.findOne(uid: req.uid, (err, doc) ->
-			if err?
-				res.send(503)
-			else
-				unless doc?
-					doc = new Storage(_id: req.uid, uid: req.uid, data: req.body)
-
-					doc.save(() -> uncache(req.uid, 0, (status) ->
-							res.send(status)
-						)
-					)
-				else
-					fields = {}
-					fields['data.' + key] = val for key, val of req.body
-
-					Storage.update((_id: doc._id), $inc: (version: 1), $set: fields, () ->
-						uncache(req.uid, doc.version + 1, (status) ->
-							res.send(status)
-						)
-					)
-		)
-	else
-		res.send(200)
+	fields = {}
+	fields['data.' + key] = val for key, val of req.body
+		
+	Storage.findAndModify((uid: req.uid), ($inc: (version: 1), $set: fields), (upsert: true), (error, doc) ->
+		if error?
+			res.send(503)
+		else
+			uncache(req.uid, doc.version + 1, (status) ->
+				res.send(status)
+			)
+	)
 )
 
 # Сохраняет данные счетчика
