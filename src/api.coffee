@@ -56,34 +56,16 @@ app.post('/set/', (req, res) ->
 # Сохраняет данные счетчика
 
 app.get('/setcounter/', (req, res) ->
-	Storage.findOne(uid: req.uid, (err, doc) ->
-		if err? or not req.query.tg?
-			res.send(503)
-		else
-			tg = req.query.tg.split('.')
-			
-			unless tg.length is 1 and tg[0] is ''
-				tags = {}
-				last_visit = Math.floor(new Date() / 1000)
-
-				unless doc?
-					tags[key] = 1 for key in tg
+	tg = req.query.tg.split('.')
 	
-					doc = new Storage(_id: req.uid, uid: req.uid, tags: tags, last_visit: last_visit)
+	unless tg.length is 1 and tg[0] is ''
+		tags = {}
+		tags['tags.' + key] = 1 for key in tg
 	
-					doc.save(
-						() -> uncache(req.uid, 0, (status) ->
-							res.send(status)
-						)
-					)
-				else
-					tags['tags.' + key] = 1 for key in tg
-					Storage.update((_id: doc._id), $inc: tags, $set: (last_visit: last_visit), () ->
-						uncache(req.uid, doc.version, (status) ->
-							res.send(status)
-						)
-					)
+		Storage.update((uid: req.uid), ($inc: tags, $set: (last_visit: Math.floor(new Date() / 1000))), (error) ->
+			if error?
+				res.send(503)
 			else
 				res.send(200)
-	)
+		)
 )
