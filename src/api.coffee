@@ -16,7 +16,7 @@ timer = null
 timer = setInterval(() ->
 	(new Statistic(read: readTime, write: writeTime, time: start)).save()
 	readTime = 0
-	writeTime
+	writeTime = 0
 	start = new Date().getTime()
 , 60 * 1000)
 
