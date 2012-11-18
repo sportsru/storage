@@ -9,11 +9,12 @@ Storage = require('./models/storage')
 Statistic = require('./models/stat')
 
 start = new Date().getTime()
-counter = 0
+readTime = 0
+writeTime = 0
 timer = null
 
 timer = setInterval(() ->
-	(new Statistic(counter: counter, time: start)).save()
+	(new Statistic(read: readTime, write: writeTime, time: start)).save()
 	counter = 0
 	start = new Date().getTime()
 , 60 * 1000)
@@ -21,6 +22,8 @@ timer = setInterval(() ->
 # Возвращает версию данных
 
 app.get('/version/', (req, res) ->
+	readTime++
+	
 	Storage.findOne(uid: req.uid, (err, doc) ->
 		if err?
 			res.send(503)
@@ -36,6 +39,8 @@ app.get('/version/', (req, res) ->
 # Возвращает данные
 
 app.get('/data/', (req, res) ->
+	readTime++
+	
 	Storage.findOne(uid: req.uid, (err, doc) ->
 		if err?
 			res.send(503)
@@ -51,7 +56,7 @@ app.get('/data/', (req, res) ->
 # Сохраняет данные
 
 app.post('/set/', (req, res) ->
-	counter++
+	writeTime++
 	
 	fields = {}
 	fields['data.' + key] = val for key, val of req.body
@@ -69,7 +74,7 @@ app.post('/set/', (req, res) ->
 # Сохраняет данные счетчика
 
 app.get('/setcounter/', (req, res) ->
-	counter++
+	writeTime++
 	
 	tg = req.query.tg.split('.')
 	

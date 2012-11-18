@@ -8,7 +8,11 @@ Statistic = new Schema
 	_id :
 		type: Mixed
 		index: true
-	counter:
+	read:
+		type: Number
+		index: false
+		default: 0
+	write:
 		type: Number
 		index: false
 		default: 0
