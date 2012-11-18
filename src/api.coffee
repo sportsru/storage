@@ -13,7 +13,7 @@ counter = 0
 timer = null
 
 timer = setInterval(() ->
-	Statistic.save(counter: counter, time: start)
+	(new Statistic(counter: counter, time: start)).save()
 	counter = 0
 	start = new Date().getTime()
 , 60 * 1000)
