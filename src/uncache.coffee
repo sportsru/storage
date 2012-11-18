@@ -6,7 +6,7 @@ memcached = require './memcached'
 
 app = require('./app')
 
-EXPIRES_TIME = 3 * 24 * 60 * 60
+EXPIRES_TIME = 2 * 24 * 60 * 60
 
 exports = module.exports = (uid, version, callback) ->
 	#if uid.substr(uid.length - 2, 2) == '=='
