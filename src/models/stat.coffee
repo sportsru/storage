@@ -4,7 +4,7 @@ Schema = mongoose.Schema
 ObjectId = Schema.Types.ObjectId
 Mixed = Schema.Types.Mixed
 
-Stat = new Schema
+Statistic = new Schema
 	_id :
 		type: Mixed
 		index: true
@@ -17,4 +17,4 @@ Stat = new Schema
 		index: false
 		default: 0
 
-Model = module.exports = mongoose.model 'Stat', Stat
+Model = module.exports = mongoose.model 'Statistic', Statistic

@@ -6,14 +6,14 @@ uncache = require './uncache'
 
 app = require('./app')
 Storage = require('./models/storage')
-Stat = require('./models/stat')
+Statistic = require('./models/stat')
 
 start = new Date().getTime()
 counter = 0
 timer = null
 
 timer = setInterval(() ->
-	Stat.save(counter: counter, time: start)
+	Statistic.save(counter: counter, time: start)
 	counter = 0
 	start = new Date().getTime()
 , 60 * 1000)
