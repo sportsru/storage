@@ -6,6 +6,17 @@ uncache = require './uncache'
 
 app = require('./app')
 Storage = require('./models/storage')
+Stat = require('./models/stat')
+
+start = new Date().getTime()
+counter = 0
+timer = null
+
+timer = setInterval(() ->
+	Stat.save(counter: counter, time: start)
+	counter = 0
+	start = new Date().getTime()
+, 60 * 1000)
 
 # Возвращает версию данных
 
@@ -40,9 +51,11 @@ app.get('/data/', (req, res) ->
 # Сохраняет данные
 
 app.post('/set/', (req, res) ->
+	counter++
+	
 	fields = {}
 	fields['data.' + key] = val for key, val of req.body
-		
+	
 	Storage.findOneAndUpdate((uid: req.uid), ($inc: (version: 1), $set: fields), (upsert: true), (error, doc) ->
 		if error?
 			res.send(503)
@@ -56,6 +69,8 @@ app.post('/set/', (req, res) ->
 # Сохраняет данные счетчика
 
 app.get('/setcounter/', (req, res) ->
+	counter++
+	
 	tg = req.query.tg.split('.')
 	
 	unless tg.length is 1 and tg[0] is ''

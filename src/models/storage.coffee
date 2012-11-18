@@ -1,4 +1,5 @@
 mongoose = require('../mongo')
+
 Schema = mongoose.Schema
 ObjectId = Schema.Types.ObjectId
 Mixed = Schema.Types.Mixed
