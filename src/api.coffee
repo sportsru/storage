@@ -89,4 +89,8 @@ app.get('/setcounter/', (req, res) ->
 			else
 				res.send(200)
 		)
+		
+	else
+		res.send(200)
+
 )
