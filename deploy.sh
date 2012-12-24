@@ -4,8 +4,8 @@ lockfile='lockfile'
 
 if [ -f $lockfile ]
 then
-    echo Deploy is locked, wait for current operation to finish.
-    exit
+	echo Deploy is locked, wait for current operation to finish.
+	exit
 fi
 
 uploadservers="fe1"
@@ -33,47 +33,47 @@ up() {
 	for check in `ls .`; do
 		if [ $project == $check ]; then
 			touch $lockfile
-    	    cd $project
-    	    # old=`svnversion`
-    	    #if [ $revision > 0 ]; then
-    	    #    svn up -r$revision
-    	    #else
-    	    git pull
-    	    #fi
-    	    cd -
-    	    echo ""
-    	    #echo "Previous deployed revision of" $project":"
-    	    #echo $old
-    	    echo "Finished. Use './deploy.sh sync' to deploy changes"
-    	    echo ""
-    	    rm $lockfile
-    	    exit
-    	fi
-    done
-    echo "Project" $project "not found"
+			cd $project
+			# old=`svnversion`
+			#if [ $revision > 0 ]; then
+			#    svn up -r$revision
+			#else
+			git pull
+			#fi
+			cd -
+			echo ""
+			#echo "Previous deployed revision of" $project":"
+			#echo $old
+			echo "Finished. Use './deploy.sh sync' to deploy changes"
+			echo ""
+			rm $lockfile
+			exit
+		fi
+	done
+	echo "Project" $project "not found"
 }
 
 print_help() {
 	echo ""
-    echo "Utility that deploys an application on the remote servers."
-    echo "Usage: "
-    echo "./deploy.sh up <Project> [revision]"
-    echo "./deploy.sh sync"
-    echo ""
-    echo "up          - SVN UP project to latest revision, or certain revision number if given"
-    echo "sync        - sync files to other backends"
-    echo ""
+	echo "Utility that deploys an application on the remote servers."
+	echo "Usage: "
+	echo "./deploy.sh up <Project> [revision]"
+	echo "./deploy.sh sync"
+	echo ""
+	echo "up          - SVN UP project to latest revision, or certain revision number if given"
+	echo "sync        - sync files to other backends"
+	echo ""
 }
 
 get_ssh_connect() {
-    server=$1
-    port=`echo $server|awk -F : '{if (NF==2) print $NF}'`
-    server_port=`echo $server|awk -F : '{if (NF==2) print $1}'`
-    if [ ${port:-no} != no -a ${server_port:-no} != no ]; then
-        echo "${sshcom} -p ${port} ${sshuser}@${server_port}"
-    else
-        echo "${sshcom} ${sshuser}@${server}"
-    fi
+	server=$1
+	port=`echo $server|awk -F : '{if (NF==2) print $NF}'`
+	server_port=`echo $server|awk -F : '{if (NF==2) print $1}'`
+	if [ ${port:-no} != no -a ${server_port:-no} != no ]; then
+		echo "${sshcom} -p ${port} ${sshuser}@${server_port}"
+	else
+		echo "${sshcom} ${sshuser}@${server}"
+	fi
 }
 
 sync() {
@@ -95,12 +95,12 @@ sync() {
 		if [ "$project" != "$staticproject" ]; then
 			sshstr=`get_ssh_connect $server`
 			execstr="${sshstr} sudo /etc/init.d/php-fcgi stop && sleep 2 && sudo /etc/init.d/php-fcgi start"
-	        echo "Restart php on" $server
-	        echo "$execstr" 1>&2
-	        echo `$execstr`
-	        echo "Done."
-	    fi
-        echo ""
+			echo "Restart php on" $server
+			echo "$execstr" 1>&2
+			echo `$execstr`
+			echo "Done."
+		fi
+		echo ""
 	done
 	rm $lockfile
 	echo ""
@@ -112,8 +112,8 @@ case $command in
 	;;
 
 	up)
-    	up
-    ;;
+		up
+	;;
 
 	*)
 		print_help
