@@ -2,8 +2,7 @@
 
 lockfile='lockfile'
 
-if [ -f $lockfile ]
-then
+if [ -f $lockfile ]; then
 	echo Deploy is locked, wait for current operation to finish.
 	exit
 fi
@@ -31,22 +30,19 @@ revision=$3
 
 up() {
 	for check in `ls .`; do
-		if [ $project == $check ]; then
+		if [ "$project" = "$check" ]; then
 			touch $lockfile
+			
 			cd $project
-			# old=`svnversion`
-			#if [ $revision > 0 ]; then
-			#    svn up -r$revision
-			#else
 			git pull
-			#fi
 			cd -
+
 			echo ""
-			#echo "Previous deployed revision of" $project":"
-			#echo $old
 			echo "Finished. Use './deploy.sh sync' to deploy changes"
 			echo ""
+
 			rm $lockfile
+
 			exit
 		fi
 	done
@@ -78,7 +74,8 @@ get_ssh_connect() {
 
 sync() {
 	touch $lockfile
-	if [ "$project" == "$staticproject" ]; then
+
+	if [ "$project" = "$staticproject" ]; then
 		servers=$staticservers
 	else
 		servers=$sshservers
@@ -92,17 +89,11 @@ sync() {
 			fi
 		done
 
-		if [ "$project" != "$staticproject" ]; then
-			sshstr=`get_ssh_connect $server`
-			execstr="${sshstr} sudo /etc/init.d/php-fcgi stop && sleep 2 && sudo /etc/init.d/php-fcgi start"
-			echo "Restart php on" $server
-			echo "$execstr" 1>&2
-			echo `$execstr`
-			echo "Done."
-		fi
 		echo ""
 	done
+
 	rm $lockfile
+	
 	echo ""
 }
 
