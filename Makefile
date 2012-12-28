@@ -1,5 +1,5 @@
-COMPILER=$(PWD)/node_modules/coffee-script/bin/coffee --bare --output $(PWD)/lib/
-NODE=$(shell which node)
+COMPILER= coffee --bare --output $(PWD)/lib/
+NODE= $(shell which node)
 
 all: lib
 
