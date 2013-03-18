@@ -1,6 +1,6 @@
 {
 	"name": "config_storage",
-	"description": "Sports.ru configs storage",
+	"description": "Sports.ru config storage",
 	"private": true,
 	"version": "2.0.0",
 	"author": [

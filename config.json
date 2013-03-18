@@ -1,9 +1,14 @@
 {
-	"storage":
-	{
-		"address": "localhost",
+	"service": {
+		"host": "127.0.0.1",
 		"port": 9002
 	},
-	"mongo": "mongodb://192.168.1.240/default",
-	"memcached": "127.0.0.1:11211"
+	"mongo": {
+		"host": "192.168.1.240",
+		"db": "default"
+	},
+	"memcached": {
+		"host": "127.0.0.1",
+		"port": 11211
+	}
 }
