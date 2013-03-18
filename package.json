@@ -1,36 +1,27 @@
 {
-    "name": "application-name"
-  , "description": "Sports.ru configs storage"
-  , "author": [
-  			"Vladimir Tsvang <tsvang@sports.ru>"
-  		,	"Ivan Artamonov <artamonov@sports.ru>"
-  	]
-  , "keywords": [
-         "sports.ru"
-      ,  "memcached"
-      ,  "mongodb"
-      ,  "storage"
-      ,  "coffeescript"
-    ]
-  , "bugs": {
-        "url": "https://github.com/sportsru/config_storage/issues"
-    }
-  , "repository": {
-        "url": "https://github.com:sportsru/config_storage"
-  	}
-  , "main": "./app.js"
-  , "version": "0.0.9"
-  , "private": true
-  , "dependencies": {
-        "express": "3.x"
-	  , "memcached": "0.1.x"
-	  , "mongoose": ">= 2.6.5"
-    , "commander": "1.x"
-    }
-  , "devDependencies": {
-        "coffee-script": ">=1.3.3"
-    }
-  , "engines": {
-        "node": "*"
-    }
+	"name": "config_storage",
+	"description": "Sports.ru configs storage",
+	"private": true,
+	"version": "2.0.0",
+	"author": [
+		"Vladimir Tsvang <tsvang@sports.ru>",
+		"Ivan Artamonov <artamonov@sports.ru>",
+		"Vladimir Andreev <volodya@netfolder.ru>"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sportsru/config_storage.git"
+	},
+	"dependencies": {
+		"express": "3.x",
+		"memcached": "0.1.x",
+		"mongoose": ">= 2.6.5",
+		"commander": "1.x"
+	},
+	"devDependencies": {
+		"coffee-script": ">=1.4"
+	},
+	"scripts": {
+		"prepublish": "coffee -c -b -o lib src"
+	}
 }
