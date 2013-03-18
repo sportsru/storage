@@ -19,7 +19,7 @@
 		"commander": "1.x"
 	},
 	"devDependencies": {
-		"coffee-script": ">=1.4"
+		"coffee-script": "1.x"
 	},
 	"scripts": {
 		"prepublish": "coffee -c -b -o lib src"
