@@ -1,5 +1,5 @@
 {
-	"name": "config_storage",
+	"name": "storage",
 	"description": "Sports.ru config storage",
 	"private": true,
 	"version": "2.0.0",
@@ -13,10 +13,10 @@
 		"url": "https://github.com/sportsru/config_storage.git"
 	},
 	"dependencies": {
+		"async": "0.x",
 		"express": "3.x",
-		"memcached": "0.1.x",
-		"mongoose": ">= 2.6.5",
-		"commander": "1.x"
+		"mongodb": "1.x",
+		"node-syslog": "1.x"
 	},
 	"devDependencies": {
 		"coffee-script": "1.x"

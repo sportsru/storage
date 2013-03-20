@@ -1,9 +1,13 @@
 [{
+	"description": "Возвращает информацию о данных",
+	"path": "/storage/data/",
+	"method": "get"
+}, {
 	"description": "Возвращает данные указанной версии",
 	"path": "/storage/data/:version",
 	"method": "get"
 }, {
-	"description": "",
-	"path": "/storage/data",
+	"description": "Сохраняет новые данные",
+	"path": "/storage/data/",
 	"method": "post"
 }]
