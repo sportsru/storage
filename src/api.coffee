@@ -6,25 +6,10 @@ uncache = require './uncache'
 
 app = require('./app')
 Storage = require('./models/storage')
-Statistic = require('./models/stat')
-
-start = new Date().getTime()
-readTime = 0
-writeTime = 0
-timer = null
-
-timer = setInterval(() ->
-	(new Statistic(read: readTime, write: writeTime, time: start)).save()
-	readTime = 0
-	writeTime = 0
-	start = new Date().getTime()
-, 60 * 1000)
 
 # Возвращает версию данных
 
 app.get('/version/', (req, res) ->
-	readTime++
-	
 	Storage.findOne(uid: req.uid, (err, doc) ->
 		if err?
 			res.send(503)
@@ -40,8 +25,6 @@ app.get('/version/', (req, res) ->
 # Возвращает данные
 
 app.get('/data/', (req, res) ->
-	readTime++
-	
 	Storage.findOne(uid: req.uid, (err, doc) ->
 		if err?
 			res.send(503)
@@ -57,8 +40,6 @@ app.get('/data/', (req, res) ->
 # Сохраняет данные
 
 app.post('/set/', (req, res) ->
-	writeTime++
-	
 	fields = {}
 	fields['data.' + key] = val for key, val of req.body
 	
@@ -75,8 +56,6 @@ app.post('/set/', (req, res) ->
 # Сохраняет данные счетчика
 
 app.get('/setcounter/', (req, res) ->
-	writeTime++
-	
 	tg = req.query.tg.split('.')
 	
 	unless tg.length is 1 and tg[0] is ''
